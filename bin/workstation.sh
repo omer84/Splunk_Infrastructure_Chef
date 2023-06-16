@@ -42,10 +42,10 @@ mount_exitcode=$?
     fi
 
 # Retrieving chef code from S3 bucket 
-aws s3 cp s3://chef-code-repo/ /root  --recursive
+aws s3 cp s3://chef-code-repo/ /root --recursive
 
 # Unziping the chef-starter pack
-sudo unzip chef-starter.zip
+sudo unzip /root/chef-starter.zip
 
 # Getting Instance details
 identity_doc=$(curl -s http://169.254.169.254/latest/dynamic/instance-identity/document/)
@@ -147,3 +147,9 @@ private_ip_indexers=$(aws ec2 describe-instances --region "$region" --filters "N
 for ip in $private_ip_indexers; do
     knife bootstrap $private_ip_forwarder --ssh-user ubuntu --sudo -i Demo-key.pem -N Indexer --chef-license accept -y
 done
+
+# Generating Splunk Cookbook & recipes
+cd /root/chef-repo
+chef generate cookbook splunk-cookbook --chef-license accept
+cd cookbooks/splunk-cookbook/recipes/
+aws s3 cp s3://chef-code-repo/chef-configs/ --recursive
