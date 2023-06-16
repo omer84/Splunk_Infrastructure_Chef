@@ -18,14 +18,14 @@ data "aws_ami" "amazon_linux_2" {
   owners = ["099720109477"]
 }
 
-# Create Launch Template for Master Node
-resource "aws_launch_template" "master-custom-launch-template" {
-  name                    = "${var.project_name}-master-config"
+# Create Launch Template for Workstation Node
+resource "aws_launch_template" "workstation-custom-launch-template" {
+  name                    = "${var.project_name}-workstation-config"
   image_id                = data.aws_ami.amazon_linux_2.id
-  instance_type           = var.master_instance_type
-  vpc_security_group_ids  = [var.master_security_group]
+  instance_type           = var.workstation_instance_type
+  vpc_security_group_ids  = [var.workstation_security_group]
   key_name                = var.key_name
-  user_data               = filebase64("/Users/dhruvins/Desktop/Splunk_Infrastructure/bin/master.sh")
+  user_data               = filebase64("/Users/dhruvins/Desktop/Splunk_Infrastructure_Chef/bin/workstation.sh")
   update_default_version  = true
   disable_api_termination = true
 
@@ -38,21 +38,21 @@ resource "aws_launch_template" "master-custom-launch-template" {
   }
 }
 
-# Create Auto Scalling Group for Master Node
-resource "aws_autoscaling_group" "master-custom-autoscaling-group" {
-  name                = "${var.project_name}-master-auto-scalling-group"
+# Create Auto Scalling Group for Workstation Node
+resource "aws_autoscaling_group" "workstation-custom-autoscaling-group" {
+  name                = "${var.project_name}-workstation-auto-scalling-group"
   vpc_zone_identifier = [var.public_subnet_az1_id]
   launch_template {
-    id      = aws_launch_template.master-custom-launch-template.id
-    version = aws_launch_template.master-custom-launch-template.latest_version
+    id      = aws_launch_template.workstation-custom-launch-template.id
+    version = aws_launch_template.workstation-custom-launch-template.latest_version
   }
-  max_size         = var.master_desired_capacity
-  min_size         = var.master_desired_capacity
-  desired_capacity = var.master_desired_capacity
+  max_size         = var.workstation_desired_capacity
+  min_size         = var.workstation_desired_capacity
+  desired_capacity = var.workstation_desired_capacity
 
   tag {
     key                 = "role"
-    value               = "Master"
+    value               = "Workstation"
     propagate_at_launch = true
   }
   tag {
@@ -403,18 +403,18 @@ resource "aws_eip_association" "sh_eip_association" {
   allow_reassociation = true
 }
 
-# Fetching Master Node
-data "aws_instance" "master_instance" {
+# Fetching Workstation Node
+data "aws_instance" "workstation_instance" {
   filter {
     name   = "tag:role"
-    values = ["Master"]
+    values = ["Workstation"]
   }
 
   filter {
     name   = "instance-state-name"
     values = ["running", "pending"]
   }
-  depends_on = [aws_autoscaling_group.master-custom-autoscaling-group]
+  depends_on = [aws_autoscaling_group.workstation-custom-autoscaling-group]
 }
 
 # Fetching Deployer
@@ -499,22 +499,22 @@ resource "aws_volume_attachment" "ebs_sh" {
   force_detach = true
 }
 
-# Create EBS volume for Master Node
-resource "aws_ebs_volume" "master-volume" {
+# Create EBS volume for Workstation Node
+resource "aws_ebs_volume" "workstation-volume" {
   availability_zone = data.aws_availability_zones.available_zones.names[0]
-  size              = var.master_volume_size
+  size              = var.workstation_volume_size
   type              = "gp2"
   tags = {
     Snapshot = "true"
-    Name = "Master Volume"
+    Name = "Workstation Volume"
   }
 }
 
-# Attach volume to Master Node
-resource "aws_volume_attachment" "ebs_master" {
+# Attach volume to Workstation Node
+resource "aws_volume_attachment" "ebs_workstation" {
   device_name  = "/dev/sdf"
-  volume_id    = aws_ebs_volume.master-volume.id
-  instance_id  = data.aws_instance.master_instance.id
+  volume_id    = aws_ebs_volume.workstation-volume.id
+  instance_id  = data.aws_instance.workstation_instance.id
   force_detach = true
 }
 
