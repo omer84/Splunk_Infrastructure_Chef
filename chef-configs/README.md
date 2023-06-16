@@ -8,3 +8,4 @@
   
 * However, the chef-client will automatically run every 1 minute on the chef clients and pull the latest catalog from the master node.
 
+![chef](https://github.com/DhruvinSoni30/Splunk_Infrastructure_Chef/blob/main/images/chef.jpeg)
