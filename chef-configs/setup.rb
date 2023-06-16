@@ -35,21 +35,21 @@ end
 # Configuring Splunk service to manage it with systemctl
 file '/etc/systemd/system/splunk.service' do
     content <<-EOH
-    [Unit]
-    Description=Splunk
-    After=network.target
+[Unit]
+Description=Splunk
+After=network.target
 
-    [Service]
-    ExecStart=/opt/splunk/bin/splunk start
-    Type=forking
-    User=root
-    Group=root
-    Restart=on-failure
-    TimeoutSec=300
+[Service]
+ExecStart=/opt/splunk/bin/splunk start
+Type=forking
+User=root
+Group=root
+Restart=on-failure
+TimeoutSec=300
 
-    [Install]
-    WantedBy=multi-user.target
-    EOH
+[Install]
+WantedBy=multi-user.target
+EOH
 end
 
 # Reloading Daemon
