@@ -15,3 +15,11 @@ An indexer cluster is a group of Splunk nodes that, working in concert, provide 
 **Forwarders:** Splunk instance that forwards data to another Splunk instance, such as an indexer or another forwarder, or to a third-party system.
 
 ![splunk](https://github.com/DhruvinSoni30/Splunk_Infrastructure_Chef/blob/main/images/splunk.png)
+
+# Workflow
+![workflow](https://github.com/DhruvinSoni30/Splunk_Infrastructure_Chef/blob/main/images/Workflow.png)
+
+# Connect with me:
+[![Connect with me on LinkedIn](https://img.shields.io/badge/LinkedIn-Connect-blue?style=for-the-badge&logo=linkedin)](https://www.linkedin.com/in/dhruvinksoni/) [![Open My Medium Profile](https://img.shields.io/badge/Medium-Profile-blue?style=for-the-badge&logo=medium)](https://medium.com/@dksoni4530)
+
+**Note:** This is an opensource project, if you want to contribute then feel free to raise the MR and also if you find any error then please raise an issue. 
