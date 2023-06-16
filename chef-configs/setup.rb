@@ -24,4 +24,48 @@ execute "start_splunk" do
     command "#{splunk_install_dir}/bin/splunk start --accept-license --answer-yes --no-prompt --seed-passwd #{admin_pwd}"
     action :run
     not_if "#{splunk_install_dir}/bin/splunk status | grep 'splunkd is running'"
-  end
+end
+
+# Stopping Splunk Service
+execute "stop_splunk" do
+    command "#{splunk_install_dir}/bin/splunk stop"
+    action :run
+end
+
+# Configuring Splunk service to manage it with systemctl
+file '/etc/systemd/system/splunk.service' do
+    content <<-EOH
+    [Unit]
+    Description=Splunk
+    After=network.target
+
+    [Service]
+    ExecStart=/opt/splunk/bin/splunk start
+    Type=forking
+    User=root
+    Group=root
+    Restart=on-failure
+    TimeoutSec=300
+
+    [Install]
+    WantedBy=multi-user.target
+    EOH
+end
+
+# Reloading Daemon
+execute "reload-daemon" do
+    command "sudo systemctl daemon-reload"
+    action :run
+end
+
+# Enabling Splunk service
+execute "enable-splunk" do
+    command "sudo systemctl enable splunk"
+    action :run
+end
+
+# Starting Splunk service
+execute "start-splunk" do
+    command "sudo systemctl start splunk"
+    action :run
+end
