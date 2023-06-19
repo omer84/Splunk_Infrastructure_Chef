@@ -42,12 +42,16 @@ mount_exitcode=$?
     fi
 
 # Retrieving chef code from S3 bucket 
-aws s3 cp s3://chef-code-repo/ /root --recursive
+aws s3 cp s3://chef-code-repo/Demo-key.pem /root 
+aws s3 cp s3://chef-code-repo/chef-starter.zip /root
 
 sleep 5
 
 # Unziping the chef-starter pack
-sudo unzip /root/chef-starter.zip
+unzip -q /root/chef-starter.zip -d /root
+unzip_code=$?
+echo "unzip code" >> $logfile
+echo $unzip_code >> $logfile
 
 # Getting Instance details
 identity_doc=$(curl -s http://169.254.169.254/latest/dynamic/instance-identity/document/)
@@ -151,7 +155,7 @@ for ip in $private_ip_indexers; do
 done
 
 # Generating Splunk Cookbook & recipes
-cd /root/chef-repo
+cd /root/chef-repo/cookbooks
 chef generate cookbook splunk-cookbook --chef-license accept
-cd cookbooks/splunk-cookbook/recipes/
-aws s3 cp s3://chef-code-repo/chef-configs/ --recursive
+cd /root/chef-repo/cookbooks/splunk-cookbook/recipes/
+aws s3 sync s3://chef-code-repo/chef-configs/ . 
