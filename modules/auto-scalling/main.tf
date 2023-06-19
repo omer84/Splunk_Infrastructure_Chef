@@ -69,7 +69,7 @@ resource "aws_launch_template" "idx-custom-launch-template" {
   instance_type           = var.idx_instance_type
   vpc_security_group_ids  = [var.alb_security_group]
   key_name                = var.key_name
-  user_data               = filebase64("/Users/dhruvins/Desktop/Splunk_Infrastructure/bin/client.sh")
+  user_data               = filebase64("/Users/dhruvins/Desktop/Splunk_Infrastructure_Chef/bin/client.sh")
   update_default_version  = true
   disable_api_termination = true
 
@@ -119,7 +119,7 @@ resource "aws_launch_template" "sh-custom-launch-template" {
   instance_type           = var.sh_instance_type
   vpc_security_group_ids  = [var.sh_security_group]
   key_name                = var.key_name
-  user_data               = filebase64("/Users/dhruvins/Desktop/Splunk_Infrastructure/bin/client.sh")
+  user_data               = filebase64("/Users/dhruvins/Desktop/Splunk_Infrastructure_Chef/bin/client.sh")
   update_default_version  = true
   disable_api_termination = true
 
@@ -168,7 +168,7 @@ resource "aws_launch_template" "hf-custom-launch-template" {
   instance_type           = var.hf_instance_type
   vpc_security_group_ids  = [var.hf_security_group]
   key_name                = var.key_name
-  user_data               = filebase64("/Users/dhruvins/Desktop/Splunk_Infrastructure/bin/client.sh")
+  user_data               = filebase64("/Users/dhruvins/Desktop/Splunk_Infrastructure_Chef/bin/client.sh")
   update_default_version  = true
   disable_api_termination = true
 
@@ -217,7 +217,7 @@ resource "aws_launch_template" "dp-custom-launch-template" {
   instance_type           = var.dp_instance_type
   vpc_security_group_ids  = [var.dp_security_group]
   key_name                = var.key_name
-  user_data               = filebase64("/Users/dhruvins/Desktop/Splunk_Infrastructure/bin/client.sh")
+  user_data               = filebase64("/Users/dhruvins/Desktop/Splunk_Infrastructure_Chef/bin/client.sh")
   update_default_version  = true
   disable_api_termination = true
 
@@ -351,7 +351,7 @@ resource "aws_dlm_lifecycle_policy" "example" {
 # AWS EIP for Indexers
 resource "aws_eip" "idx-eips" {
   count = aws_autoscaling_group.idx-custom-autoscaling-group.desired_capacity
-  vpc   = true
+  domain   = "vpc"
   lifecycle {
     create_before_destroy = true
   }
@@ -362,7 +362,7 @@ resource "aws_eip" "idx-eips" {
 
 # AWS EIP for Search Head
 resource "aws_eip" "sh-eip" {
-  vpc = true
+  domain   = "vpc"
   lifecycle {
     create_before_destroy = true
   }

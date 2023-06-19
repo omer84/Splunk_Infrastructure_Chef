@@ -14,7 +14,7 @@ hf_instance_type = "t2.medium"
 dp_instance_type = "t2.medium"
 
 # Master instance type
-master_instance_type = "t2.medium"
+workstation_instance_type = "t2.medium"
 
 # Region
 region = "us-east-2"

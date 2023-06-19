@@ -44,6 +44,8 @@ mount_exitcode=$?
 # Retrieving chef code from S3 bucket 
 aws s3 cp s3://chef-code-repo/ /root --recursive
 
+sleep 5
+
 # Unziping the chef-starter pack
 sudo unzip /root/chef-starter.zip
 
