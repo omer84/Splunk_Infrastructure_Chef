@@ -53,6 +53,8 @@ unzip_code=$?
 echo "unzip code" >> $logfile
 echo $unzip_code >> $logfile
 
+mv /root/Demo-key.pem /root/chef-repo
+
 # Getting Instance details
 identity_doc=$(curl -s http://169.254.169.254/latest/dynamic/instance-identity/document/)
 availability_zone=$(echo "$identity_doc" | jq -r '.availabilityZone')
@@ -128,30 +130,39 @@ eips=$(aws ec2 describe-addresses --query "Addresses[?NetworkInterfaceId == null
 # Attaching EIP to Instance
 aws ec2 associate-address --region "$region" --public-ip "$eips" --instance-id "$instance_id"
 
+cd /root/chef-repo
+
+client_count=$(aws ec2 describe-instances --region "$region" --filters "Name=tag:ChefEnv,Values=production" "Name=instance-state-name,Values=running,pending" --query 'length(Reservations[].Instances[])')
+
+knife_node_count=$(knife node list | wc -l)
+
 # Fetching the Private IP of the Deployer node
 private_ip_deployer=$(aws ec2 describe-instances --region "$region" --filters "Name=tag:role,Values=DP" "Name=instance-state-name,Values=running,pending" --query 'Reservations[].Instances[].PrivateIpAddress' --output text)
-
-# Bootstrap the Deployer Node
-knife bootstrap $private_ip_deployer --ssh-user ubuntu --sudo -i Demo-key.pem -N Deployer --chef-license accept -y
 
 # Fetching the Private IP of the Search Head node
 private_ip_searchhead=$(aws ec2 describe-instances --region "$region" --filters "Name=tag:role,Values=SH" "Name=instance-state-name,Values=running,pending" --query 'Reservations[].Instances[].PrivateIpAddress' --output text)
 
-# Bootstrap the Search Head Node
-knife bootstrap $private_ip_searchhead --ssh-user ubuntu --sudo -i Demo-key.pem -N SearchHead --chef-license accept -y
-
 # Fetching the Private IP of the Forwarder node
 private_ip_forwarder=$(aws ec2 describe-instances --region "$region" --filters "Name=tag:role,Values=HF" "Name=instance-state-name,Values=running,pending" --query 'Reservations[].Instances[].PrivateIpAddress' --output text)
-
-# Bootstrap the Forwarder Node
-knife bootstrap $private_ip_forwarder --ssh-user ubuntu --sudo -i Demo-key.pem -N Forwarder --chef-license accept -y
 
 # Fetching the Private IP of the Indexers node
 private_ip_indexers=$(aws ec2 describe-instances --region "$region" --filters "Name=tag:role,Values=idx" "Name=instance-state-name,Values=running,pending" --query 'Reservations[].Instances[].PrivateIpAddress' --output text)
 
-# Bootstrap the Forwarder Node
-for ip in $private_ip_indexers; do
-    knife bootstrap $private_ip_forwarder --ssh-user ubuntu --sudo -i Demo-key.pem -N Indexer --chef-license accept -y
+while [ $client_count != $knife_node_count ]; do
+    sleep 5
+    # Bootstrap the Deployer Node
+    knife bootstrap $private_ip_deployer --ssh-user ubuntu --sudo -i Demo-key.pem -N Deployer --chef-license accept -y
+
+    # Bootstrap the Search Head Node
+    knife bootstrap $private_ip_searchhead --ssh-user ubuntu --sudo -i Demo-key.pem -N SearchHead --chef-license accept -y
+
+    # Bootstrap the Forwarder Node
+    knife bootstrap $private_ip_forwarder --ssh-user ubuntu --sudo -i Demo-key.pem -N Forwarder --chef-license accept -y
+
+    # Bootstrap the Forwarder Node
+    for ip in $private_ip_indexers; do
+        knife bootstrap $private_ip_forwarder --ssh-user ubuntu --sudo -i Demo-key.pem -N Indexer --chef-license accept -y
+    done
 done
 
 # Generating Splunk Cookbook & recipes
