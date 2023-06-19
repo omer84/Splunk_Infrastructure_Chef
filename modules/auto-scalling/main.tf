@@ -101,7 +101,7 @@ resource "aws_autoscaling_group" "idx-custom-autoscaling-group" {
     propagate_at_launch = true
   }
   tag {
-    key                 = "PuppetEnv"
+    key                 = "ChefEnv"
     value               = "production"
     propagate_at_launch = true
   }
@@ -150,7 +150,7 @@ resource "aws_autoscaling_group" "sh-custom-autoscaling-group" {
     propagate_at_launch = true
   }
   tag {
-    key                 = "PuppetEnv"
+    key                 = "ChefEnv"
     value               = "production"
     propagate_at_launch = true
   }
@@ -199,7 +199,7 @@ resource "aws_autoscaling_group" "hf-custom-autoscaling-group" {
     propagate_at_launch = true
   }
   tag {
-    key                 = "PuppetEnv"
+    key                 = "ChefEnv"
     value               = "production"
     propagate_at_launch = true
   }
@@ -248,7 +248,7 @@ resource "aws_autoscaling_group" "dp-custom-autoscaling-group" {
     propagate_at_launch = true
   }
   tag {
-    key                 = "PuppetEnv"
+    key                 = "ChefEnv"
     value               = "production"
     propagate_at_launch = true
   }
