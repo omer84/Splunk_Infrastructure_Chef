@@ -17,7 +17,7 @@ variable "idx_instance_type" {
 }
 
 # Instance type for Master Node
-variable "master_instance_type" {
+variable "workstation_instance_type" {
   type = string
 }
 
@@ -56,8 +56,8 @@ variable "idx_desired_capacity" {
   type = number
 }
 
-# Desire capacity for Master Node
-variable "master_desired_capacity" {
+# Desire capacity for Workstation Node
+variable "workstation_desired_capacity" {
   type = number
 }
 
@@ -80,7 +80,7 @@ variable "dp_desired_capacity" {
 variable "alb_security_group" {}
 
 # Master security group
-variable "master_security_group" {}
+variable "workstation_security_group" {}
 
 # Stack name
 variable "project_name" {}
@@ -101,7 +101,7 @@ variable "dp_security_group" {}
 variable "idx_volume_size" {}
 
 # Master Volume Size
-variable "master_volume_size" {}
+variable "workstation_volume_size" {}
 
 # IDX Volume Size
 variable "sh_volume_size" {}

@@ -262,9 +262,9 @@ resource "aws_security_group" "dp_security_group" {
   }
 }
 
-# Create Security Group for the Master Node
-resource "aws_security_group" "master_security_group" {
-  name   = "Master security group"
+# Create Security Group for the Workstation Node
+resource "aws_security_group" "workstation_security_group" {
+  name   = "Workstation security group"
   vpc_id = var.vpc_id
 
   ingress {
@@ -300,7 +300,7 @@ resource "aws_security_group" "master_security_group" {
   }
 
   tags = {
-    Name = "${var.project_name}-Master-security-group"
+    Name = "${var.project_name}-Workstation-security-group"
     Env  = var.env
     Type = var.type
   }

@@ -5,7 +5,7 @@ variable "project_name" {}
 variable "sh_instance_type" {}
 
 # Master instance type
-variable "master_instance_type" {}
+variable "workstation_instance_type" {}
 
 # HF instance type
 variable "hf_instance_type" {}
@@ -46,7 +46,7 @@ variable "idx_desired_capacity" {
 }
 
 # Desire capacity for Master Node
-variable "master_desired_capacity" {
+variable "workstation_desired_capacity" {
   type    = number
   default = 1
 }
@@ -75,7 +75,7 @@ variable "idx_volume_size" {
 }
 
 # Master volume size
-variable "master_volume_size" {
+variable "workstation_volume_size" {
   default = 10
 }
 
