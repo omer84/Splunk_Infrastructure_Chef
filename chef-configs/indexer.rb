@@ -1,4 +1,4 @@
-# Fetching admin password
+# Fetching admin password from AWS Secrets Manager
 admin_pwd = shell_out!('aws secretsmanager get-secret-value --region us-east-2 --secret-id Splunk_Password | jq -r .SecretString').stdout.chomp 
 
 # Fetching Region
@@ -16,7 +16,7 @@ execute "update-package" do
     action :run
 end
 
-# Configure Indexer
+# Configuring Indexer
 execute "configure-indexer" do
     command "#{splunk_install_dir}/bin/splunk edit cluster-config -mode slave -master_uri https://#{deployer_ip} :8089 -secret #{admin_pwd} -auth admin:#{admin_pwd}"
     action :run
