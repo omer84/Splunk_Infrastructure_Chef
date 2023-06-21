@@ -179,5 +179,16 @@ cd /root/chef-repo/cookbooks
 chef generate cookbook splunk-cookbook --chef-license accept
 cd /root/chef-repo/cookbooks/splunk-cookbook/recipes/
 aws s3 sync s3://chef-code-repo/chef-configs/ . 
+mv dp.rb hf.rb idx.rb set.rb sh.rb /root/chef-repo/roles
 cd /root/chef-repo/cookbooks
 sudo knife cookbook upload splunk-cookbook
+cd /root/chef-repo/
+sudo knife role from file roles/dp.rb
+sudo knife role from file roles/hf.rb
+sudo knife role from file roles/idx.rb
+sudo knife role from file roles/set.rb
+sudo knife role from file roles/sh.rb
+sudo knife node run_list set Deployer "role[Deployer]"
+sudo knife node run_list set SearchHead "role[SearchHead]"
+sudo knife node run_list set Indexer-$ip "role[Indexer]"
+sudo knife node run_list set Forwarder "role[Forwarder]"
