@@ -1,4 +1,4 @@
-# Fetching admin password
+# Fetching admin password from AWS Secrets Manager
 admin_pwd = shell_out!('aws secretsmanager get-secret-value --region us-east-2 --secret-id Splunk_Password | jq -r .SecretString').stdout.chomp 
 
 # Splunk Home directory
@@ -10,7 +10,7 @@ execute "update-package" do
     action :run
 end
 
-# Configure Deployer
+# Configuring Deployer
 execute "configure-deployer" do
     command "#{splunk_install_dir}/bin/splunk edit cluster-config -mode master -replication_factor 3 -search_factor 2 -secret #{admin_pwd} -auth admin:#{admin_pwd}"
     action :run
